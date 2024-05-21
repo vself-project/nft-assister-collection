@@ -5,6 +5,7 @@
     "test": "jest",
     "deploy": "ts-node ./sources/contract.deploy.ts",
     "api_deploy": "ts-node ./sources/contract.deploy_api.ts",
+    "mint": "ts-node ./sources/contract.mint_api.ts",
     "read": "ts-node ./sources/contract.read.ts"
   },
   "dependencies": {
