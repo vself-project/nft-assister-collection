@@ -50,7 +50,7 @@ import { NftItem } from "./output/sample_NftItem";
     });
     let deployContract = contractAddress(0, init);
     // ========================================
-    let packed = beginCell().storeUint(0, 32).storeStringTail("Mint").endCell();
+    //let packed = beginCell().storeUint(0, 32).storeStringTail("Mint").endCell();
     // ========================================
     let deployAmount = toNano("0.3");
     let seqno: number = await wallet_contract.getSeqno();
@@ -68,14 +68,14 @@ import { NftItem } from "./output/sample_NftItem";
                 value: deployAmount,
                 init: { code: init.code, data: init.data },
                 bounce: true,
-                body: packed,
+                //body: packed,
             }),
         ],
     });
 
-    let collection_client = client4.open(NftCollection.fromAddress(deployContract));
-    let latest_indexId = (await collection_client.getGetCollectionData()).next_item_index;
-    console.log("Latest indexID:[", latest_indexId, "]");
-    let item_address = await collection_client.getGetNftAddressByIndex(latest_indexId);
-    console.log("Minting NFT Item: ", item_address);
+    // let collection_client = client4.open(NftCollection.fromAddress(deployContract));
+    // let latest_indexId = (await collection_client.getGetCollectionData()).next_item_index;
+    // console.log("Latest indexID:[", latest_indexId, "]");
+    // let item_address = await collection_client.getGetNftAddressByIndex(latest_indexId);
+    // console.log("Minting NFT Item: ", item_address);
 })();

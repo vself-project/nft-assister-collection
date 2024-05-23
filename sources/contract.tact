@@ -3,7 +3,8 @@ const minTonsForStorage: Int = ton("0.02");
 const gasConsumption: Int = ton("0.02");
 
 contract NftCollection {
-    next_item_index: Int as uint32 = 0;
+    collection_id: Int as uint32 = 0;
+    next_item_index: Int as uint32 = 1;
     owner_address: Address;
     royalty_params: RoyaltyParams?;                      
     collection_content: Cell;   
@@ -112,6 +113,9 @@ contract NftItem {
         self.collection_address = collection_address;
         self.item_index = item_index;
         self.is_initialized = false;
+
+        let b: StringBuilder = beginString();
+        //self.individual_content = ....
     }
 
     receive(msg: Transfer){
