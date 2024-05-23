@@ -26,6 +26,8 @@ contract NftCollection {
         emit(LogEventMintRecord{ minter: sender(), item_id: self.next_item_index, generate_number: nativeRandom() }.toCell());
     }
 
+    receive() {}
+
     // ===== Private Methods ===== //
     fun mint(sender: Address, msgValue: Int) {
         require(self.next_item_index >= 0, "non-sequential NFTs");
