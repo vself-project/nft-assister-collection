@@ -56,7 +56,7 @@ import { NftItem } from "./output/sample_NftItem";
     // ========================================
     //let packed = beginCell().storeUint(0, 32).storeStringTail("Mint").endCell();
     // ========================================
-    let deployAmount = toNano("0.3");
+    let deployAmount = toNano("0.2");
     let seqno: number = await wallet_contract.getSeqno();
     let balance: bigint = await wallet_contract.getBalance();
     // ========================================

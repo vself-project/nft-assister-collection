@@ -30,6 +30,7 @@ contract NftCollection {
 
     // ===== Private Methods ===== //
     fun mint(sender: Address, msgValue: Int, token_owner: Address) {
+        require(sender == self.owner_address, "mint allowed only for collection owner");
         require(self.next_item_index >= 0, "non-sequential NFTs");
         let nft_init: StateInit = self.getNftItemInit(self.next_item_index);
         send(SendParameters{
