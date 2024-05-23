@@ -132,34 +132,34 @@ contract NftItem {
                 mode: SendPayGasSeparately,
                 body: Excesses { query_id: msg.query_id }.toCell()
             });
-        } else {
-            require(ctx.sender == self.owner!!, "not owner");
-            self.owner = msg.new_owner;  // change current owner to the new_owner
-            if (msg.forward_amount > 0) {
-                send(SendParameters{
-                    to: msg.new_owner,
-                    value: msg.forward_amount,
-                    mode:  SendPayGasSeparately, 
-                    bounce: true,
-                    body: OwnershipAssigned{
-                        query_id: msg.query_id,
-                        prev_owner: ctx.sender,
-                        forward_payload: msg.forward_payload
-                    }.toCell()
-                }); 
-            }
+        } //else {
+        //     require(ctx.sender == self.owner!!, "not owner");
+        //     self.owner = msg.new_owner;  // change current owner to the new_owner
+        //     if (msg.forward_amount > 0) {
+        //         send(SendParameters{
+        //             to: msg.new_owner,
+        //             value: msg.forward_amount,
+        //             mode:  SendPayGasSeparately, 
+        //             bounce: true,
+        //             body: OwnershipAssigned{
+        //                 query_id: msg.query_id,
+        //                 prev_owner: ctx.sender,
+        //                 forward_payload: msg.forward_payload
+        //             }.toCell()
+        //         }); 
+        //     }
 
-            msgValue = msgValue - ctx.readForwardFee(); 
-            if (msg.response_destination != null) { 
-                send(SendParameters{ 
-                    to: msg.response_destination!!,
-                    value: msgValue - msg.forward_amount,
-                    mode: SendPayGasSeparately,
-                    bounce: true,
-                    body: Excesses { query_id: msg.query_id }.toCell()
-                });
-            } 
-        }
+        //     msgValue = msgValue - ctx.readForwardFee(); 
+        //     if (msg.response_destination != null) { 
+        //         send(SendParameters{ 
+        //             to: msg.response_destination!!,
+        //             value: msgValue - msg.forward_amount,
+        //             mode: SendPayGasSeparately,
+        //             bounce: true,
+        //             body: Excesses { query_id: msg.query_id }.toCell()
+        //         });
+        //     } 
+        // }
     }
     
     receive(msg: GetStaticData){ 
