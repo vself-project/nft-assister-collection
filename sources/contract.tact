@@ -3,7 +3,7 @@ const minTonsForStorage: Int = ton("0.02");
 const gasConsumption: Int = ton("0.02");
 
 contract NftCollection {
-    collection_id: Int as uint32 = 0;
+    collection_id: Int as uint32 = 1;
     next_item_index: Int as uint32 = 1;
     owner_address: Address;
     royalty_params: RoyaltyParams?;                      
@@ -15,19 +15,23 @@ contract NftCollection {
         self.royalty_params = royalty_params;
     }
 
-    receive("Mint"){
+    receive() {
+        // accept incoming TON transfer
+    }
+
+    receive(msg: Mint){
         let ctx: Context = context(); // get sender Info
         let msgValue: Int = ctx.value;
         let tonBalanceBeforeMsg: Int = myBalance() - msgValue;
         let storageFee: Int = minTonsForStorage - min(tonBalanceBeforeMsg, minTonsForStorage);
         msgValue = msgValue - (storageFee + gasConsumption);
-        self.mint(ctx.sender, msgValue);
+        self.mint(ctx.sender, msgValue, msg.token_owner);
 
         emit(LogEventMintRecord{ minter: sender(), item_id: self.next_item_index, generate_number: nativeRandom() }.toCell());
     }
 
     // ===== Private Methods ===== //
-    fun mint(sender: Address, msgValue: Int) {
+    fun mint(sender: Address, msgValue: Int, token_owner: Address) {
         require(self.next_item_index >= 0, "non-sequential NFTs");
         let nft_init: StateInit = self.getNftItemInit(self.next_item_index);
         send(SendParameters{
@@ -37,7 +41,7 @@ contract NftCollection {
                 mode: SendIgnoreErrors,
                 body: Transfer {
                     query_id: 0,
-                    new_owner: sender,
+                    new_owner: token_owner,
                     response_destination: self.owner_address,
                     custom_payload: self.collection_content,
                     forward_amount: 0,
