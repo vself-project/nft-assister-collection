@@ -27,7 +27,8 @@ import { NftItem } from "./output/sample_NftItem";
     // Parameters for NFTs
     const OFFCHAIN_CONTENT_PREFIX = 0x01;
     //const string_first = "https://s.getgems.io/nft-staging/c/628f6ab8077060a7a8d52d63/"; // Change to the content URL you prepared
-    const string_first = "https://gateway.pinata.cloud/ipfs/QmUUN6c4Q7joJcU4XaX53QLrq8AWc9gJaQkxfm6X3KDuCj/";
+    //const string_first = "https://gateway.pinata.cloud/ipfs/QmUUN6c4Q7joJcU4XaX53QLrq8AWc9gJaQkxfm6X3KDuCj/";
+    const string_first = "https://gateway.pinata.cloud/ipfs/bafybeiaqhcw4r33jqdws7kish36s5o4lkpsxyfbm6npjxemfvn4xwpxh6q/";
     let newContent = beginCell().storeInt(OFFCHAIN_CONTENT_PREFIX, 8).storeStringRefTail(string_first).endCell();
 
     let mnemonics = (process.env.mnemonics || "").toString(); // 🔴 Change to your own, by creating .env file!

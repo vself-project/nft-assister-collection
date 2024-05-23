@@ -191,7 +191,8 @@ contract NftItem {
         let b: StringBuilder = beginString();
         let collectionData: String = (self.individual_content!!).asSlice().asString();
         b.append(collectionData);
-        b.append(self.item_index.toString());
+        //b.append(self.item_index.toString());
+        b.append("item");
         b.append(".json");
 
         return GetNftData {
