@@ -15,13 +15,13 @@ contract NftCollection {
         self.royalty_params = royalty_params;
     }
 
-    receive("Mint"){
+    receive(msg: Mint){
         let ctx: Context = context(); // get sender Info
         let msgValue: Int = ctx.value;
         let tonBalanceBeforeMsg: Int = myBalance() - msgValue;
         let storageFee: Int = minTonsForStorage - min(tonBalanceBeforeMsg, minTonsForStorage);
         msgValue = msgValue - (storageFee + gasConsumption);
-        self.mint(ctx.sender, msgValue);
+        self.mint(ctx.sender, msgValue, msg.token_owner);
 
         emit(LogEventMintRecord{ minter: sender(), item_id: self.next_item_index, generate_number: nativeRandom() }.toCell());
     }
@@ -29,7 +29,7 @@ contract NftCollection {
     receive() {}
 
     // ===== Private Methods ===== //
-    fun mint(sender: Address, msgValue: Int) {
+    fun mint(sender: Address, msgValue: Int, token_owner: Address) {
         require(self.next_item_index >= 0, "non-sequential NFTs");
         let nft_init: StateInit = self.getNftItemInit(self.next_item_index);
         send(SendParameters{
@@ -39,7 +39,7 @@ contract NftCollection {
                 mode: SendIgnoreErrors,
                 body: Transfer {
                     query_id: 0,
-                    new_owner: sender,
+                    new_owner: token_owner,
                     response_destination: self.owner_address,
                     custom_payload: self.collection_content,
                     forward_amount: 0,
@@ -116,7 +116,7 @@ contract NftItem {
         self.item_index = item_index;
         self.is_initialized = false;
 
-        let b: StringBuilder = beginString();
+        //let b: StringBuilder = beginString();
         //self.individual_content = ....
     }
 

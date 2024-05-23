@@ -7,6 +7,7 @@ import {
     internal,
     fromNano,
     WalletContractV4,
+    address,
 } from "@ton/ton";
 import { deploy } from "./utils/deploy";
 import { printAddress, printDeploy, printHeader, printSeparator } from "./utils/print";
@@ -83,7 +84,12 @@ import { NftItem } from "./output/sample_NftItem";
         {
             value: mintAmount
         },
-        "Mint"
+        {
+            $$type: "Mint",
+            //token_owner: address("0QDSsrY85GlfPACvL4H-ILhtMTjnEVo-TUrM9NU7p0-afYt3")
+            token_owner: address("UQCvr59O9r4t9qPX6HFM27KXOofEITApFRkhXGp07kMXQ5Ld")
+
+        }
     );
     console.log("Mint result: ", mint_res);
 
