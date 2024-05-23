@@ -73,7 +73,7 @@ contract NftCollection {
         let b: StringBuilder = beginString();
         let collectionDataString: String = self.collection_content.asSlice().asString();
         b.append(collectionDataString);
-        b.append("meta.json"); // You can changed this your self.
+        b.append("collection.json");
         return CollectionData{
             next_item_index: self.next_item_index, 
             collection_content: b.toCell(), 
@@ -115,9 +115,6 @@ contract NftItem {
         self.collection_address = collection_address;
         self.item_index = item_index;
         self.is_initialized = false;
-
-        //let b: StringBuilder = beginString();
-        //self.individual_content = ....
     }
 
     receive(msg: Transfer){
