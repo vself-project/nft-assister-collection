@@ -20,9 +20,9 @@ import { NftItem } from "./output/sample_NftItem";
 // ================================================================= //
 
 (async () => {
-    // Create client for testnet sandboxv4 API - alternative endpoint
+    // Create client for mainnet/testnet wallet v4 API
     const client4 = new TonClient4({
-        endpoint: "https://sandbox-v4.tonhubapi.com", // Test-net
+        endpoint: process.env.mainnet ? "https://mainnet-v4.tonhubapi.com" : "https://sandbox-v4.tonhubapi.com",
     });
 
     // Parameters for NFTs
@@ -32,10 +32,11 @@ import { NftItem } from "./output/sample_NftItem";
     //const string_first = "https://gateway.pinata.cloud/ipfs/bafybeiaqhcw4r33jqdws7kish36s5o4lkpsxyfbm6npjxemfvn4xwpxh6q/";
     //const string_first = "https://gateway.pinata.cloud/ipfs/QmNkPuWdMk8DYQxZWQLNZ3n7qRsbrcEPidqjATvJngd91a/";
     //const string_first = "https://gateway.pinata.cloud/ipfs/QmXut6m7XsyQWVH1A9wY78NFhwHKfEiuqCXej3TRUu432C/";
-    const string_first = "ipfs://gateway.pinata.cloud/ipfs/QmXut6m7XsyQWVH1A9wY78NFhwHKfEiuqCXej3TRUu432C/";
+    const string_first = "ipfs://QmXut6m7XsyQWVH1A9wY78NFhwHKfEiuqCXej3TRUu432C/";
     let newContent = beginCell().storeInt(OFFCHAIN_CONTENT_PREFIX, 8).storeStringRefTail(string_first).endCell();
+    const seed = process.env.mainnet ? process.env.mnemonics_main : process.env.mnemonics;
 
-    let mnemonics = (process.env.mnemonics || "").toString(); // 🔴 Change to your own, by creating .env file!
+    let mnemonics = (seed || "").toString();
     let keyPair = await mnemonicToPrivateKey(mnemonics.split(" "));
     let secretKey = keyPair.secretKey;
     let workchain = 0;

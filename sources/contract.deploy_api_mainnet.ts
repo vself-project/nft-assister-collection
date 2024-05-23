@@ -19,9 +19,9 @@ import { NftItem } from "./output/sample_NftItem";
 // ================================================================= //
 
 (async () => {
-    // Create client for testnet sandboxv4 API - alternative endpoint
+    // Create client for mainnet API
     const client4 = new TonClient4({
-        endpoint: "https://sandbox-v4.tonhubapi.com", // Test-net
+        endpoint: "https://mainnet-v4.tonhubapi.com", // Test-net
     });
 
     // Parameters for NFTs
@@ -34,7 +34,7 @@ import { NftItem } from "./output/sample_NftItem";
     const string_first = "ipfs://QmXut6m7XsyQWVH1A9wY78NFhwHKfEiuqCXej3TRUu432C/";
     let newContent = beginCell().storeInt(OFFCHAIN_CONTENT_PREFIX, 8).storeStringRefTail(string_first).endCell();
 
-    let mnemonics = (process.env.mnemonics || "").toString(); // 🔴 Change to your own, by creating .env file!
+    let mnemonics = (process.env.mnemonics_main || "").toString(); // 🔴 Change to your own, by creating .env file!
     let keyPair = await mnemonicToPrivateKey(mnemonics.split(" "));
     let secretKey = keyPair.secretKey;
     let workchain = 0;
