@@ -5,7 +5,8 @@ message LogEventMintRecord {
 }
 
 message Mint {
-    token_owner: Address;  
+    token_owner: Address; 
+    token_metadata_url: String;
 }
 
 message(0x693d3950) GetRoyaltyParams {

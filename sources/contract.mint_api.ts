@@ -77,8 +77,9 @@ import { NftItem } from "./output/sample_NftItem";
 
     let latest_indexId = (await collection_client.getGetCollectionData()).next_item_index;
     console.log("Latest indexID:[", latest_indexId, "]");
+    console.log("Collection: ", deployContract);
 
-    const mintAmount = toNano("0.1");
+    const mintAmount = toNano("0.05");
     let mint_res = await collection_client.send(
         wallet_contract.sender(secretKey),
         {
@@ -87,7 +88,8 @@ import { NftItem } from "./output/sample_NftItem";
         { 
             $$type: "Mint",
             //token_owner: address("0QDSsrY85GlfPACvL4H-ILhtMTjnEVo-TUrM9NU7p0-afYt3")
-            token_owner: address("UQCvr59O9r4t9qPX6HFM27KXOofEITApFRkhXGp07kMXQ5Ld")
+            token_owner: address("UQCvr59O9r4t9qPX6HFM27KXOofEITApFRkhXGp07kMXQ5Ld"),
+            token_metadata_url: "https://gateway.pinata.cloud/ipfs/QmPRyMpVWFaqbgBpJWQJzjPJSEcRCDMVq5TXNJ8Sd2qj23/item.json"
         }
     );
     console.log("Mint result: ", mint_res);

@@ -25,14 +25,17 @@ contract NftCollection {
         let tonBalanceBeforeMsg: Int = myBalance() - msgValue;
         let storageFee: Int = minTonsForStorage - min(tonBalanceBeforeMsg, minTonsForStorage);
         msgValue = msgValue - (storageFee + gasConsumption);
-        self.mint(ctx.sender, msgValue, msg.token_owner);
+        self.mint(ctx.sender, msgValue, msg.token_owner, msg.token_metadata_url);
 
         emit(LogEventMintRecord{ minter: sender(), item_id: self.next_item_index, generate_number: nativeRandom() }.toCell());
     }
 
     // ===== Private Methods ===== //
-    fun mint(sender: Address, msgValue: Int, token_owner: Address) {
+    fun mint(sender: Address, msgValue: Int, token_owner: Address, metadata_url: String) {
         require(self.next_item_index >= 0, "non-sequential NFTs");
+        let meta: StringBuilder = beginString();
+        meta.append(metadata_url);
+
         let nft_init: StateInit = self.getNftItemInit(self.next_item_index);
         send(SendParameters{
                 to: contractAddress(nft_init), 
@@ -43,7 +46,8 @@ contract NftCollection {
                     query_id: 0,
                     new_owner: token_owner,
                     response_destination: self.owner_address,
-                    custom_payload: self.collection_content,
+                    //custom_payload: self.collection_content,
+                    custom_payload: meta.toCell(),
                     forward_amount: 0,
                     forward_payload: emptySlice()
                 }.toCell(),
@@ -119,7 +123,6 @@ contract NftItem {
         self.is_initialized = false;
 
         let b: StringBuilder = beginString();
-        //self.individual_content = ....
     }
 
     receive(msg: Transfer){
@@ -191,10 +194,12 @@ contract NftItem {
     // --------- Get Function  --------- //
     get fun get_nft_data(): GetNftData {
         let b: StringBuilder = beginString();
-        let collectionData: String = (self.individual_content!!).asSlice().asString();
-        b.append(collectionData);
-        b.append(self.item_index.toString());
-        b.append(".json");
+        // let collectionData: String = (self.individual_content!!).asSlice().asString();
+        // b.append(collectionData);
+        // b.append(self.item_index.toString());
+        // b.append(".json");
+        let metadata: String = (self.individual_content!!).asSlice().asString();
+        b.append("https://gateway.pinata.cloud/ipfs/QmPRyMpVWFaqbgBpJWQJzjPJSEcRCDMVq5TXNJ8Sd2qj23/item.json");
 
         return GetNftData {
             is_initialized: self.is_initialized, 
@@ -202,6 +207,7 @@ contract NftItem {
             collection_address: self.collection_address, 
             owner_address: self.owner!!,
             individual_content: b.toCell()
+            //individual_content: self.individual_content!!
         };
     }
 }
