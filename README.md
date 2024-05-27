@@ -8,7 +8,7 @@ First create .env file
 ```bash
 MNEMONIC = "apple1 apple2 ... apple24"
 MNEMONIC_MAIN = "potato1 potato2 ... potato24"
-MNEMONIC_MAIN = false
+MAINNET = false
 ```
 
 Then run scripts:
