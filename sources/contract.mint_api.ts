@@ -22,7 +22,7 @@ import { NftItem } from "./output/sample_NftItem";
 (async () => {
     // Create client for mainnet/testnet wallet v4 API
     const client4 = new TonClient4({
-        endpoint: process.env.mainnet ? "https://mainnet-v4.tonhubapi.com" : "https://sandbox-v4.tonhubapi.com",
+        endpoint: process.env.MAINNET ? "https://mainnet-v4.tonhubapi.com" : "https://sandbox-v4.tonhubapi.com",
     });
 
     // Parameters for NFTs
@@ -34,7 +34,7 @@ import { NftItem } from "./output/sample_NftItem";
     //const string_first = "https://gateway.pinata.cloud/ipfs/QmXut6m7XsyQWVH1A9wY78NFhwHKfEiuqCXej3TRUu432C/";
     const string_first = "ipfs://QmXut6m7XsyQWVH1A9wY78NFhwHKfEiuqCXej3TRUu432C/";
     let newContent = beginCell().storeInt(OFFCHAIN_CONTENT_PREFIX, 8).storeStringRefTail(string_first).endCell();
-    const seed = process.env.mainnet ? process.env.mnemonics_main : process.env.mnemonics;
+    const seed = process.env.MAINNET ? process.env.MNEMONIC_MAIN : process.env.MNEMONIC;
 
     let mnemonics = (seed || "").toString();
     let keyPair = await mnemonicToPrivateKey(mnemonics.split(" "));
