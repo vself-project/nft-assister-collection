@@ -7,6 +7,7 @@ import {
     internal,
     fromNano,
     WalletContractV4,
+    address,
 } from "@ton/ton";
 import { deploy } from "./utils/deploy";
 import { printAddress, printDeploy, printHeader, printSeparator } from "./utils/print";
@@ -19,9 +20,9 @@ import { NftItem } from "./output/sample_NftItem";
 // ================================================================= //
 
 (async () => {
-    // Create client for testnet sandboxv4 API - alternative endpoint
+    // Create client for mainnet/testnet wallet v4 API
     const client4 = new TonClient4({
-        endpoint: "https://sandbox-v4.tonhubapi.com", // Test-net
+        endpoint: process.env.MAINNET ? "https://mainnet-v4.tonhubapi.com" : "https://sandbox-v4.tonhubapi.com",
     });
 
     // Parameters for NFTs
@@ -33,8 +34,9 @@ import { NftItem } from "./output/sample_NftItem";
     //const string_first = "https://gateway.pinata.cloud/ipfs/QmXut6m7XsyQWVH1A9wY78NFhwHKfEiuqCXej3TRUu432C/";
     const string_first = "ipfs://QmXut6m7XsyQWVH1A9wY78NFhwHKfEiuqCXej3TRUu432C/";
     let newContent = beginCell().storeInt(OFFCHAIN_CONTENT_PREFIX, 8).storeStringRefTail(string_first).endCell();
+    const seed = process.env.MAINNET ? process.env.MNEMONIC_MAIN : process.env.MNEMONIC;
 
-    let mnemonics = (process.env.MNEMONIC || "").toString(); // 🔴 Change to your own, by creating .env file!
+    let mnemonics = (seed || "").toString();
     let keyPair = await mnemonicToPrivateKey(mnemonics.split(" "));
     let secretKey = keyPair.secretKey;
     let workchain = 0;
@@ -53,33 +55,26 @@ import { NftItem } from "./output/sample_NftItem";
         destination: owner,
     });
     let deployContract = contractAddress(0, init);
-    // ========================================
-    //let packed = beginCell().storeUint(0, 32).storeStringTail("Mint").endCell();
-    // ========================================
-    let deployAmount = toNano("0.2");
-    let seqno: number = await wallet_contract.getSeqno();
-    let balance: bigint = await wallet_contract.getBalance();
-    // ========================================
-    console.log("Current deployment wallet balance: ", fromNano(balance).toString(), "💎TON");
-    printSeparator();
-    console.log("Deploying contract to address: ", deployContract);
-    await wallet_contract.sendTransfer({
-        seqno,
-        secretKey,
-        messages: [
-            internal({
-                to: deployContract,
-                value: deployAmount,
-                init: { code: init.code, data: init.data },
-                bounce: true,
-                //body: packed,
-            }),
-        ],
-    });
+    let collection_client = client4.open(NftCollection.fromAddress(deployContract));
 
-    // let collection_client = client4.open(NftCollection.fromAddress(deployContract));
-    // let latest_indexId = (await collection_client.getGetCollectionData()).next_item_index;
-    // console.log("Latest indexID:[", latest_indexId, "]");
+    let latest_indexId = (await collection_client.getGetCollectionData()).next_item_index;
+    console.log("Latest indexID:[", latest_indexId, "]");
+
+    const mintAmount = toNano("0.1");
+    let mint_res = await collection_client.send(
+        wallet_contract.sender(secretKey),
+        {
+            value: mintAmount
+        },
+        {
+            $$type: "Mint",
+            token_owner: address("0QDSsrY85GlfPACvL4H-ILhtMTjnEVo-TUrM9NU7p0-afYt3")
+            //token_owner: address("UQCvr59O9r4t9qPX6HFM27KXOofEITApFRkhXGp07kMXQ5Ld")
+
+        }
+    );
+    console.log("Mint result: ", mint_res);
+
     // let item_address = await collection_client.getGetNftAddressByIndex(latest_indexId);
     // console.log("Minting NFT Item: ", item_address);
 })();
