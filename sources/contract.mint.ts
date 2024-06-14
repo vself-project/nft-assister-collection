@@ -20,9 +20,11 @@ import { NftItem } from "./output/sample_NftItem";
 // ================================================================= //
 
 (async () => {
+    const MAINNET = process.env.MAINNET == "true";
+    console.log('Mainnet: ', MAINNET);
     // Create client for mainnet/testnet wallet v4 API
     const client4 = new TonClient4({
-        endpoint: process.env.MAINNET ? "https://mainnet-v4.tonhubapi.com" : "https://sandbox-v4.tonhubapi.com",
+        endpoint: MAINNET ? "https://mainnet-v4.tonhubapi.com" : "https://sandbox-v4.tonhubapi.com",
     });
 
     // Parameters for NFTs
@@ -34,7 +36,7 @@ import { NftItem } from "./output/sample_NftItem";
     //const string_first = "https://gateway.pinata.cloud/ipfs/QmXut6m7XsyQWVH1A9wY78NFhwHKfEiuqCXej3TRUu432C/";
     const string_first = "ipfs://QmXut6m7XsyQWVH1A9wY78NFhwHKfEiuqCXej3TRUu432C/";
     let newContent = beginCell().storeInt(OFFCHAIN_CONTENT_PREFIX, 8).storeStringRefTail(string_first).endCell();
-    const seed = process.env.MAINNET ? process.env.MNEMONIC_MAIN : process.env.MNEMONIC;
+    const seed = MAINNET ? process.env.MNEMONIC_MAIN : process.env.MNEMONIC;
 
     let mnemonics = (seed || "").toString();
     let keyPair = await mnemonicToPrivateKey(mnemonics.split(" "));
@@ -56,24 +58,25 @@ import { NftItem } from "./output/sample_NftItem";
     });
     let deployContract = contractAddress(0, init);
     let collection_client = client4.open(NftCollection.fromAddress(deployContract));
+    console.log("Collection address: ", deployContract);
 
     let latest_indexId = (await collection_client.getGetCollectionData()).next_item_index;
     console.log("Latest indexID:[", latest_indexId, "]");
 
     const mintAmount = toNano("0.1");
-    let mint_res = await collection_client.send(
-        wallet_contract.sender(secretKey),
-        {
-            value: mintAmount
-        },
-        {
-            $$type: "Mint",
-            token_owner: address("0QDSsrY85GlfPACvL4H-ILhtMTjnEVo-TUrM9NU7p0-afYt3")
-            //token_owner: address("UQCvr59O9r4t9qPX6HFM27KXOofEITApFRkhXGp07kMXQ5Ld")
+    // let mint_res = await collection_client.send(
+    //     wallet_contract.sender(secretKey),
+    //     {
+    //         value: mintAmount
+    //     },
+    //     {
+    //         $$type: "Mint",
+    //         token_owner: address("0QDSsrY85GlfPACvL4H-ILhtMTjnEVo-TUrM9NU7p0-afYt3")
+    //         //token_owner: address("UQCvr59O9r4t9qPX6HFM27KXOofEITApFRkhXGp07kMXQ5Ld")
 
-        }
-    );
-    console.log("Mint result: ", mint_res);
+    //     }
+    // );
+    //console.log("Mint result: ", mint_res);
 
     // let item_address = await collection_client.getGetNftAddressByIndex(latest_indexId);
     // console.log("Minting NFT Item: ", item_address);
