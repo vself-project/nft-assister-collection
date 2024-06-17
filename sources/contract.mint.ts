@@ -29,12 +29,7 @@ import { NftItem } from "./output/sample_NftItem";
 
     // Parameters for NFTs
     const OFFCHAIN_CONTENT_PREFIX = 0x01;
-    //const string_first = "https://s.getgems.io/nft-staging/c/628f6ab8077060a7a8d52d63/"; // Change to the content URL you prepared
-    //const string_first = "https://gateway.pinata.cloud/ipfs/QmUUN6c4Q7joJcU4XaX53QLrq8AWc9gJaQkxfm6X3KDuCj/";
-    //const string_first = "https://gateway.pinata.cloud/ipfs/bafybeiaqhcw4r33jqdws7kish36s5o4lkpsxyfbm6npjxemfvn4xwpxh6q/";
-    //const string_first = "https://gateway.pinata.cloud/ipfs/QmNkPuWdMk8DYQxZWQLNZ3n7qRsbrcEPidqjATvJngd91a/";
-    //const string_first = "https://gateway.pinata.cloud/ipfs/QmXut6m7XsyQWVH1A9wY78NFhwHKfEiuqCXej3TRUu432C/";
-    const string_first = "ipfs://QmXut6m7XsyQWVH1A9wY78NFhwHKfEiuqCXej3TRUu432C/";
+    const string_first = "ipfs://bafybeieohr6wlvpxz2aol3hdxbbjqflczpvxxb56ngtr4jwqcunnn4uzeu/collection.json";
     let newContent = beginCell().storeInt(OFFCHAIN_CONTENT_PREFIX, 8).storeStringRefTail(string_first).endCell();
     const seed = MAINNET ? process.env.MNEMONIC_MAIN : process.env.MNEMONIC;
 
@@ -64,19 +59,19 @@ import { NftItem } from "./output/sample_NftItem";
     console.log("Latest indexID:[", latest_indexId, "]");
 
     const mintAmount = toNano("0.1");
-    // let mint_res = await collection_client.send(
-    //     wallet_contract.sender(secretKey),
-    //     {
-    //         value: mintAmount
-    //     },
-    //     {
-    //         $$type: "Mint",
-    //         token_owner: address("0QDSsrY85GlfPACvL4H-ILhtMTjnEVo-TUrM9NU7p0-afYt3")
-    //         //token_owner: address("UQCvr59O9r4t9qPX6HFM27KXOofEITApFRkhXGp07kMXQ5Ld")
-
-    //     }
-    // );
-    //console.log("Mint result: ", mint_res);
+    let mint_res = await collection_client.send(
+        wallet_contract.sender(secretKey),
+        {
+            value: mintAmount
+        },
+        {
+            $$type: "Mint",
+            token_owner: address("0QDSsrY85GlfPACvL4H-ILhtMTjnEVo-TUrM9NU7p0-afYt3"),
+            //token_owner: address("UQCvr59O9r4t9qPX6HFM27KXOofEITApFRkhXGp07kMXQ5Ld")
+            token_metadata: "ipfs://QmeKXHpNyQJHyVYai5vAjzDbvn2MnTsnpp3EfcS6Bc3g29/"
+        }
+    );
+    console.log("Mint is finished.");
 
     // let item_address = await collection_client.getGetNftAddressByIndex(latest_indexId);
     // console.log("Minting NFT Item: ", item_address);

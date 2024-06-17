@@ -21,7 +21,7 @@ contract NftCollection {
         let tonBalanceBeforeMsg: Int = myBalance() - msgValue;
         let storageFee: Int = minTonsForStorage - min(tonBalanceBeforeMsg, minTonsForStorage);
         msgValue = msgValue - (storageFee + gasConsumption);
-        self.mint(ctx.sender, msgValue, msg.token_owner);
+        self.mint(ctx.sender, msgValue, msg.token_owner, msg.token_metadata);
 
         emit(LogEventMintRecord{ minter: sender(), item_id: self.next_item_index, generate_number: nativeRandom() }.toCell());
     }
@@ -29,10 +29,12 @@ contract NftCollection {
     receive() {}
 
     // ===== Private Methods ===== //
-    fun mint(sender: Address, msgValue: Int, token_owner: Address) {
+    fun mint(sender: Address, msgValue: Int, token_owner: Address, token_metadata: String) {
         require(sender == self.owner_address, "mint allowed only for collection owner");
         require(self.next_item_index >= 0, "non-sequential NFTs");
         let nft_init: StateInit = self.getNftItemInit(self.next_item_index);
+        let metadata: StringBuilder = beginString();
+        metadata.append(token_metadata);
         send(SendParameters{
                 to: contractAddress(nft_init), 
                 value: msgValue, 
@@ -42,7 +44,8 @@ contract NftCollection {
                     query_id: 0,
                     new_owner: token_owner,
                     response_destination: self.owner_address,
-                    custom_payload: self.collection_content,
+                    //custom_payload: self.collection_content,
+                    custom_payload: metadata.toCell(),
                     forward_amount: 0,
                     forward_payload: emptySlice()
                 }.toCell(),
@@ -71,13 +74,14 @@ contract NftCollection {
 
     // ------------------ Get Function  ------------------ //
     get fun get_collection_data(): CollectionData {     
-        let b: StringBuilder = beginString();
-        let collectionDataString: String = self.collection_content.asSlice().asString();
-        b.append(collectionDataString);
-        b.append("collection.json");
-        return CollectionData{
+        // let b: StringBuilder = beginString();
+        // let collectionDataString: String = self.collection_content.asSlice().asString();
+        // b.append(collectionDataString);
+        // b.append("collection.json");
+        return CollectionData {
             next_item_index: self.next_item_index, 
-            collection_content: b.toCell(), 
+            //collection_content: b.toCell(), 
+            collection_content: self.collection_content,
             owner_address: self.owner_address
         };
     }
@@ -91,11 +95,8 @@ contract NftCollection {
         return initOf NftItem(myAddress(), item_index);
     }
     
-    get fun get_nft_content(index: Int, individual_content: Cell): Cell { 
-        let b: StringBuilder = beginString();
-        let ic: String = individual_content.asSlice().asString();
-        b.append(ic);
-        return b.toCell();
+    get fun get_nft_content(index: Int, individual_content: Cell): Cell {
+        return individual_content;
     }
 
     get fun royalty_params(): RoyaltyParams {
@@ -105,7 +106,7 @@ contract NftCollection {
 
 contract NftItem {
     collection_address: Address;
-    item_index: Int; 
+    item_index: Int;
     is_initialized: Bool;
 
     owner: Address?;
@@ -186,19 +187,18 @@ contract NftItem {
 
     // --------- Get Function  --------- //
     get fun get_nft_data(): GetNftData {
-        let b: StringBuilder = beginString();
-        let collectionData: String = (self.individual_content!!).asSlice().asString();
-        b.append(collectionData);
-        //b.append(self.item_index.toString());
-        b.append("item");
-        b.append(".json");
+        // let b: StringBuilder = beginString();
+        // let collectionData: String = (self.individual_content!!).asSlice().asString();
+        // b.append(collectionData);
+        // b.append("item");
+        // b.append(".json");
 
         return GetNftData {
             is_initialized: self.is_initialized, 
             index: self.item_index, 
             collection_address: self.collection_address, 
             owner_address: self.owner!!,
-            individual_content: b.toCell()
+            individual_content: self.individual_content!!
         };
     }
 }
