@@ -58,7 +58,7 @@ import { NftItem } from "./output/sample_NftItem";
     let latest_indexId = (await collection_client.getGetCollectionData()).next_item_index;
     console.log("Latest indexID:[", latest_indexId, "]");
 
-    const mintAmount = toNano("0.1");
+    const mintAmount = toNano("0.05");
     let mint_res = await collection_client.send(
         wallet_contract.sender(secretKey),
         {

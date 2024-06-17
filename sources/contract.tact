@@ -1,6 +1,6 @@
 import "./message.tact";
-const minTonsForStorage: Int = ton("0.02");
-const gasConsumption: Int = ton("0.02");
+const minTonsForStorage: Int = ton("0.005");
+const gasConsumption: Int = ton("0.01");
 
 contract NftCollection {
     collection_id: Int as uint32 = 0;
