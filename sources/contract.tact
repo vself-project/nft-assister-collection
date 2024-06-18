@@ -44,7 +44,6 @@ contract NftCollection {
                     query_id: 0,
                     new_owner: token_owner,
                     response_destination: self.owner_address,
-                    //custom_payload: self.collection_content,
                     custom_payload: metadata.toCell(),
                     forward_amount: 0,
                     forward_payload: emptySlice()
@@ -52,7 +51,6 @@ contract NftCollection {
                 code: nft_init.code,
                 data: nft_init.data
             });
-        // dump(self.next_item_index); // Reference at: https://tact-by-example.org/03-emit
         self.next_item_index = self.next_item_index + 1;
     }
 
@@ -74,13 +72,8 @@ contract NftCollection {
 
     // ------------------ Get Function  ------------------ //
     get fun get_collection_data(): CollectionData {     
-        // let b: StringBuilder = beginString();
-        // let collectionDataString: String = self.collection_content.asSlice().asString();
-        // b.append(collectionDataString);
-        // b.append("collection.json");
         return CollectionData {
-            next_item_index: self.next_item_index, 
-            //collection_content: b.toCell(), 
+            next_item_index: self.next_item_index,
             collection_content: self.collection_content,
             owner_address: self.owner_address
         };
@@ -187,12 +180,6 @@ contract NftItem {
 
     // --------- Get Function  --------- //
     get fun get_nft_data(): GetNftData {
-        // let b: StringBuilder = beginString();
-        // let collectionData: String = (self.individual_content!!).asSlice().asString();
-        // b.append(collectionData);
-        // b.append("item");
-        // b.append(".json");
-
         return GetNftData {
             is_initialized: self.is_initialized, 
             index: self.item_index, 

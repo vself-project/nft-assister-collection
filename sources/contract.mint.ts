@@ -32,7 +32,6 @@ import { NftItem } from "./output/sample_NftItem";
     const string_first = "ipfs://bafybeieohr6wlvpxz2aol3hdxbbjqflczpvxxb56ngtr4jwqcunnn4uzeu/collection.json";
     let newContent = beginCell().storeInt(OFFCHAIN_CONTENT_PREFIX, 8).storeStringRefTail(string_first).endCell();
     const seed = MAINNET ? process.env.MNEMONIC_MAIN : process.env.MNEMONIC;
-
     let mnemonics = (seed || "").toString();
     let keyPair = await mnemonicToPrivateKey(mnemonics.split(" "));
     let secretKey = keyPair.secretKey;

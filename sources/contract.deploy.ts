@@ -19,17 +19,19 @@ import { NftItem } from "./output/sample_NftItem";
 // ================================================================= //
 
 (async () => {
-    // Create client for testnet sandboxv4 API - alternative endpoint
+    const MAINNET = process.env.MAINNET == "true";
+    console.log('Mainnet: ', MAINNET);
+    // Create client for TON API
     const client4 = new TonClient4({
-        endpoint: "https://sandbox-v4.tonhubapi.com", // Test-net
+        endpoint: MAINNET ? "https://mainnet-v4.tonhubapi.com" : "https://sandbox-v4.tonhubapi.com",
     });
 
     // Parameters for NFTs
     const OFFCHAIN_CONTENT_PREFIX = 0x01;
     const string_first = "ipfs://bafybeieohr6wlvpxz2aol3hdxbbjqflczpvxxb56ngtr4jwqcunnn4uzeu/collection.json";
     let newContent = beginCell().storeInt(OFFCHAIN_CONTENT_PREFIX, 8).storeStringRefTail(string_first).endCell();
-
-    let mnemonics = (process.env.MNEMONIC || "").toString(); // 🔴 Change to your own, by creating .env file!
+    const seed = MAINNET ? process.env.MNEMONIC_MAIN : process.env.MNEMONIC;
+    let mnemonics = (seed || "").toString(); // 🔴 Change to your own, by creating .env file!
     let keyPair = await mnemonicToPrivateKey(mnemonics.split(" "));
     let secretKey = keyPair.secretKey;
     let workchain = 0;
@@ -49,8 +51,6 @@ import { NftItem } from "./output/sample_NftItem";
     });
     let deployContract = contractAddress(0, init);
     // ========================================
-    //let packed = beginCell().storeUint(0, 32).storeStringTail("Mint").endCell();
-    // ========================================
     let deployAmount = toNano("0.3");
     let seqno: number = await wallet_contract.getSeqno();
     let balance: bigint = await wallet_contract.getBalance();
@@ -67,7 +67,6 @@ import { NftItem } from "./output/sample_NftItem";
                 value: deployAmount,
                 init: { code: init.code, data: init.data },
                 bounce: true,
-                //body: packed,
             }),
         ],
     });
